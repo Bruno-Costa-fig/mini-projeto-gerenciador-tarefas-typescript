@@ -21,11 +21,11 @@ Cada tarefa possui:
 Use uma classe chamada `Tarefa` para definir uma tarefa.
 
 Crie uma classe chamada `GerenciadorDeTarefas` com os seguintes métodos:
-- `adicionarTarefa(tarefa: ITarefa): void`: Adiciona uma nova tarefa à lista de tarefas.
-- `listarTarefas(): ITarefa[]`: Retorna todas as tarefas.
+- `adicionarTarefa(tarefa: Tarefa): void`: Adiciona uma nova tarefa à lista de tarefas.
+- `listarTarefas(): Tarefa[]`: Retorna todas as tarefas.
 - `marcarComoConcluida(id: string): void`: Marca uma tarefa como concluída com base no ID.
-- `filtrarPorResponsavel(nome: string): ITarefa[]`: Retorna tarefas atribuídas a um responsável.
-- `filtrarPorStatus(concluida: boolean): ITarefa[]`: Retorna tarefas pelo status (concluídas ou pendentes).
+- `filtrarPorResponsavel(nome: string): Tarefa[]`: Retorna tarefas atribuídas a um responsável.
+- `filtrarPorStatus(concluida: boolean): Tarefa[]`: Retorna tarefas pelo status (concluídas ou pendentes).
 
 ### Interface do Usuário (console)
 
