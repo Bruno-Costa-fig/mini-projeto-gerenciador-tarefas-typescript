@@ -18,7 +18,7 @@ Cada tarefa possui:
 
 ### Estrutura do Projeto
 
-Use uma interface chamada `ITarefa` para definir o contrato das tarefas.
+Use uma classe chamada `Tarefa` para definir uma tarefa.
 
 Crie uma classe chamada `GerenciadorDeTarefas` com os seguintes métodos:
 - `adicionarTarefa(tarefa: ITarefa): void`: Adiciona uma nova tarefa à lista de tarefas.
