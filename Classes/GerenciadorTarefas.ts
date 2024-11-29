@@ -1,5 +1,7 @@
 import Tarefa from "./Tarefa";
 import PromptSync from "prompt-sync";
+import jsPDF from 'jspdf';
+import { randomUUID } from "crypto";
 
 const prompt = PromptSync()
 
@@ -11,7 +13,8 @@ abstract class GerenciadorTarefas {
         console.log("[1]  - Adicionar nova tarefa")
         console.log("[2]  - listar todas as tarefas")
         console.log("[3]  - marcar tarefa concluída")
-        console.log("[4]  - Sair")
+        console.log("[4]  - Gerar relatório PDF")
+        console.log("[5]  - Sair")
     }
 
     static main(): void {
@@ -36,6 +39,9 @@ abstract class GerenciadorTarefas {
                     this.marcarComoConcluida(id)
                     break
                 case 4:
+                    this.gerarRelatorioPDF()
+                    break
+                case 5:
                     process.exit(0);
                     break;
             }
@@ -69,6 +75,18 @@ abstract class GerenciadorTarefas {
         if(!exists){
             console.log("Não foi encontrado tarefa com o id informado!")
         }
+    }
+
+    static gerarRelatorioPDF(){
+        const doc = new jsPDF()
+
+        doc.text("Relatório de tarefas:", 20, 20)
+
+        this.listaTarefas.map((tarefa, index) => {
+            doc.text(`ID: ${tarefa.id} - Descrição: ${tarefa.descricao}\nResponsável: ${tarefa.responsavel} \ncriado em: ${tarefa.dataCriacao.toLocaleString()} - Status: ${tarefa.concluida ? 'concluída' : 'pendente'}`, 20, (30 + (10 * index + 1)))
+        })
+
+        doc.save(`relatorio_tarefas-${randomUUID().substring(0,4)}.pdf`);
     }
 }
 
