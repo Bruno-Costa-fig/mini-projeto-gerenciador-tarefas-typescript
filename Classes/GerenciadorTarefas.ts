@@ -12,9 +12,11 @@ abstract class GerenciadorTarefas {
         console.log("============ Gerenciador de Tarefas =========== ");
         console.log("[1]  - Adicionar nova tarefa")
         console.log("[2]  - listar todas as tarefas")
-        console.log("[3]  - marcar tarefa concluída")
-        console.log("[4]  - Gerar relatório PDF")
-        console.log("[5]  - Sair")
+        console.log("[3]  - alterar status tarefa")
+        console.log("[4]  - listar por responsável")
+        console.log("[5]  - listar por status")
+        console.log("[6]  - Gerar relatório PDF")
+        console.log("[7]  - Sair")
     }
 
     static main(): void {
@@ -32,28 +34,50 @@ abstract class GerenciadorTarefas {
                     this.adicionarTarefa(newTarefa)
                     break;
                 case 2:
-                    this.listarTarefas()
+                    this.listarTarefas(this.listaTarefas)
                     break;
                 case 3:
                     let id = prompt("Digite o id da tarefa: ")
                     this.marcarComoConcluida(id)
                     break
                 case 4:
+                    let nomeResponsavel = prompt("Digite o nome do responsável: ")
+
+                    let listaFiltrada = this.filtrarPorResponsavel(nomeResponsavel);
+                    this.listarTarefas(listaFiltrada)
+                case 5:
+                    let status = Number(prompt("Escolha qual o status - [1] concluída | [2] pendente: "))
+
+                    if(status != 1 && status != 2){
+                        console.log("Opção inválida!")
+                        break
+                    }
+
+                    let listaFiltradaStatus = this.filtrarPorStatus(status == 1 ? true : false);
+
+                    this.listarTarefas(listaFiltradaStatus)
+                    break
+                case 6:
                     this.gerarRelatorioPDF()
                     break
-                case 5:
+                case 7:
                     process.exit(0);
                     break;
             }
         } 
     }
 
-    static listarTarefas(): void {
+    static listarTarefas(listagemTarefas: Tarefa[]): void {
         console.log("======== Lista de tarefas =========")
-        this.listaTarefas.map(tarefa => {
-            console.log("-------------")
-            console.log(`ID: ${tarefa.id} - Descrição: ${tarefa.descricao}\nResponsável: ${tarefa.responsavel} \ncriado em: ${tarefa.dataCriacao.toLocaleString()} - Status: ${tarefa.concluida ? 'concluída' : 'pendente'}`)
-            console.log("-------------")
+        listagemTarefas.map(tarefa => {
+            console.log(`
+                ID: ${tarefa.id} 
+                Título: ${tarefa.titulo}
+                Descrição: ${tarefa.descricao}
+                Responsável: ${tarefa.responsavel} 
+                criado em: ${tarefa.dataCriacao.toLocaleString()}
+                Status: ${tarefa.concluida ? 'concluída' : 'pendente'}
+            `)
         })
     }
 
@@ -66,7 +90,7 @@ abstract class GerenciadorTarefas {
 
         this.listaTarefas.forEach(tarefa => {
             if(tarefa.id == id){
-                tarefa.concluida = true
+                tarefa.concluida = !tarefa.concluida
                 exists = true
                 return
             }
@@ -77,13 +101,33 @@ abstract class GerenciadorTarefas {
         }
     }
 
+    static filtrarPorResponsavel(nome: string): Tarefa[] {
+        return this.listaTarefas.filter((tarefaAtual) => {
+            if(tarefaAtual.responsavel === nome){
+                return true
+            }
+
+            return false
+        })
+    }
+
+    static filtrarPorStatus(concluida: boolean): Tarefa[] {
+        return this.listaTarefas.filter((tarefaAtual) => {
+            if(tarefaAtual.concluida == concluida){
+                return true
+            }
+
+            return false
+        })
+    }
+
     static gerarRelatorioPDF(){
         const doc = new jsPDF()
 
         doc.text("Relatório de tarefas:", 20, 20)
 
         this.listaTarefas.map((tarefa, index) => {
-            doc.text(`ID: ${tarefa.id} - Descrição: ${tarefa.descricao}\nResponsável: ${tarefa.responsavel} \ncriado em: ${tarefa.dataCriacao.toLocaleString()} - Status: ${tarefa.concluida ? 'concluída' : 'pendente'}`, 20, (30 + (10 * index + 1)))
+            doc.text(`ID: ${tarefa.id} - Descrição: ${tarefa.descricao}\nResponsável: ${tarefa.responsavel} \ncriado em: ${tarefa.dataCriacao.toLocaleString()} - Status: ${tarefa.concluida ? 'concluída' : 'pendente'}`, 20, (30 + (30 * index + 1)))
         })
 
         doc.save(`relatorio_tarefas-${randomUUID().substring(0,4)}.pdf`);
